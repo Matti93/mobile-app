@@ -1,4 +1,4 @@
-import 'package:animaciones_basicas/screens/homeScreen.dart';
+import 'package:yahrzeits/screens/homeScreen.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {

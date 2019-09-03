@@ -1,4 +1,4 @@
-import 'package:animaciones_basicas/screens/splashScreen.dart';
+import 'package:yahrzeits/screens/splashScreen.dart';
 import 'package:flutter/material.dart';
 
 class AppBasica extends StatelessWidget {
