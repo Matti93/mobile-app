@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:animaciones_basicas/screens/loginScreen.dart';
 import 'package:flutter/material.dart';
-import 'homeScreen.dart';
 import "../service/graphqlConf.dart";
 import "../service/queryMutation.dart";
 import "package:graphql_flutter/graphql_flutter.dart";
@@ -31,9 +28,6 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
   RegExp contRegExp = new RegExp(r'^([1-zA-Z0-1@.\s]{1,255})$');
   String _correo;
   String _contrasena;
-  String mensaje = '';
-
-  bool _logueado = false;
 
   initState() {
     super.initState();
@@ -92,8 +86,6 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _logueado ? HomeScreen(mensaje: mensaje) : createUserForm(),
-//      body: loginForm(),
     );
   }
 
@@ -142,8 +134,8 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
                   validator: (text) {
                     if (text.length == 0) {
                       return "This field is required.";
-                    } else if (text.length <= 5) {
-                      return "Your password must be at least 5 characters";
+                    } else if (text.length <= 3) {
+                      return "Your password must be at least 3 characters";
                     } else if (!contRegExp.hasMatch(text)) {
                       return "The password format is not correct";
                     }
@@ -177,13 +169,11 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
                         );
                         print(result);
                         if (!result.hasErrors) {
-                          log('noentra');
                           txtMail.clear();
                           txtPassword.clear();
                           _showDialog('Your user is created!',
                               'The user with email \n $_correo was created!', 'LogIn', true);
                         } else {
-                          log('entra');
                           print(result);
                           _showDialog('An error ocurred',
                               result.errors[0].message, 'Close', false);

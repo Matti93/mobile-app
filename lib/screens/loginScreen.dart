@@ -1,4 +1,7 @@
+import 'package:animaciones_basicas/service/graphQLConf.dart';
+import 'package:animaciones_basicas/service/queryMutation.dart';
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'createAccountScreen.dart';
 import 'homeScreen.dart';
 
@@ -76,7 +79,38 @@ class _LoginScreenState extends State<LoginScreen>
   //   });
   // }
 
+  void _showDialog(tittleText, contentText, buttonText, isCreated) {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text(tittleText),
+          content: new Text(contentText),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text(buttonText),
+              onPressed: () {
+                if (isCreated) {
+                  Navigator.of(context).pushReplacement(LoginScreen.route());
+                } else {
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget loginForm() {
+    TextEditingController txtMail = TextEditingController();
+    TextEditingController txtPassword = TextEditingController();
+    GraphQLConfiguration graphQLConfiguration = GraphQLConfiguration();
+    QueryMutation addMutation = QueryMutation();
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -117,8 +151,8 @@ class _LoginScreenState extends State<LoginScreen>
                   validator: (text) {
                     if (text.length == 0) {
                       return "This field is required.";
-                    } else if (text.length <= 5) {
-                      return "Your password must be at least 5 characters";
+                    } else if (text.length <= 3) {
+                      return "Your password must be at least 3 characters";
                     } else if (!contRegExp.hasMatch(text)) {
                       return "The password format is not correct";
                     }
@@ -137,18 +171,32 @@ class _LoginScreenState extends State<LoginScreen>
                 ),
                 RaisedButton(
                   child: Text("Sign In"),
-                  onPressed: () {
-                    if (_key.currentState.validate()) {
+                  onPressed: () async {
                       _key.currentState.save();
-                      //Aqui se llamaria a su API para hacer el login
-                       setState(() {
-                         _logueado = true;
-                       });
-                       mensaje = 'Thanks \n $_correo \n $_contrasena';
-//                      Una forma correcta de llamar a otra pantalla
-//                      Navigator.of(context).push(HomeScreen.route(mensaje));
-                    }
-                  },
+                      if (_key.currentState.validate()) {
+                        GraphQLClient _client =
+                            graphQLConfiguration.clientToQuery();
+                        QueryResult result = await _client.mutate(
+                          MutationOptions(
+                            document: addMutation.loginUser(
+                              _correo,
+                              _contrasena,
+                            ),
+                          ),
+                        );
+                        if (!result.hasErrors) {
+                          txtMail.clear();
+                          txtPassword.clear();
+                          Navigator.of(context).pushReplacement(HomeScreen.route('asd'));
+                        } else {
+                          print(result);
+                          _showDialog('An error ocurred',
+                              result.errors[0].message, 'Close', false);
+                          txtMail.clear();
+                          txtPassword.clear();
+                        }
+                      }
+                    },
                   shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                 ),
                 FlatButton(

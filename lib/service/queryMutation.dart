@@ -10,14 +10,18 @@ class QueryMutation {
     """;
   }
 
-  String loginUser(String mail, String password){
-   return """
+  String loginUser(String mail, String password) {
+    return """
       mutation{
-          login(email: "$mail", password: "$password"){
-          email
-          token
-          }
+        login(
+          email:"$mail",
+          password: "$password"
+      )
+      {
+        token
+        email
       }
+    }
     """;
   }
 }
