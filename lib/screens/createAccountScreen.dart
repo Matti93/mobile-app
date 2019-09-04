@@ -1,20 +1,25 @@
+import 'package:animaciones_basicas/screens/loginScreen.dart';
 import 'package:flutter/material.dart';
 import 'alertDialogs.dart';
-import 'createAccountScreen.dart';
 import 'homeScreen.dart';
+import "package:flutter/material.dart";
+import "../service/graphqlConf.dart";
+import "../service/queryMutation.dart";
+import "package:graphql_flutter/graphql_flutter.dart";
+import "../models/user.dart";
 
-class LoginScreen extends StatefulWidget {
+class CreateUserAccountScreen extends StatefulWidget {
   static Route<dynamic> route() {
     return MaterialPageRoute(
-      builder: (context) => LoginScreen(),
+      builder: (context) => CreateUserAccountScreen(),
     );
   }
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _CreateUserAccountScreenState createState() => _CreateUserAccountScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
+class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<double> animation;
@@ -59,25 +64,16 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _logueado ? HomeScreen(mensaje: mensaje) : loginForm(),
+      body: _logueado ? HomeScreen(mensaje: mensaje) : createUserForm(),
 //      body: loginForm(),
     );
   }
-  //Uso esto si necesito llamar a create User en un alert
-  //  void _createUser(context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       AlertDialogWindow alertDialogWindow =
-  //           new AlertDialogWindow();
-  //       return alertDialogWindow;
-  //     },
-  //   ).whenComplete(() {
-  //     Navigator.of(context).pushReplacement(LoginScreen.route());
-  //   });
-  // }
 
-  Widget loginForm() {
+  Widget createUserForm() {
+    TextEditingController txtMail = TextEditingController();
+    TextEditingController txtPassword = TextEditingController();
+    GraphQLConfiguration graphQLConfiguration = GraphQLConfiguration();
+    QueryMutation addMutation = QueryMutation();
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -136,28 +132,34 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
                   onSaved: (text) => _contrasena = text,
                 ),
-                RaisedButton(
-                  child: Text("Sign In"),
-                  onPressed: () {
-                    if (_key.currentState.validate()) {
-                      _key.currentState.save();
-                      //Aqui se llamaria a su API para hacer el login
-                       setState(() {
-                         _logueado = true;
-                       });
-                       mensaje = 'Thanks \n $_correo \n $_contrasena';
-//                      Una forma correcta de llamar a otra pantalla
-//                      Navigator.of(context).push(HomeScreen.route(mensaje));
+                 RaisedButton(
+                  child: Text("Create Account"),
+                  onPressed: () async {
+                    if (txtMail.text.isNotEmpty &&
+                        txtPassword.text.isNotEmpty) {
+                      GraphQLClient _client = graphQLConfiguration.clientToQuery();
+                      QueryResult result = await _client.mutate(
+                        MutationOptions(
+                          document: addMutation.addUser(
+                            txtMail.text,
+                            txtPassword.text,
+                          ),
+                        ),
+                      );
+                      if (!result.hasErrors) {
+                        txtMail.clear();
+                        txtPassword.clear();
+                        Navigator.of(context).pop();
+                      }
+                      if(!result.data){
+                        txtMail.clear();
+                        txtPassword.clear();
+                        Navigator.of(context).pushReplacement(LoginScreen.route());
+                      }
                     }
                   },
                   shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                ),
-                FlatButton(
-                  child: Text("Create account"),
-                  onPressed: () async {
-                  Navigator.of(context).pushReplacement(CreateUserAccountScreen.route());
-                  },
-                )
+                 ),
               ],
             ),
           ),
