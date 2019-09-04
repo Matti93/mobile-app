@@ -1,5 +1,6 @@
-import 'package:yahrzeits/screens/homeScreen.dart';
 import 'package:flutter/material.dart';
+import 'alertDialogs.dart';
+import 'homeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   static Route<dynamic> route() {
@@ -60,6 +61,19 @@ class _LoginScreenState extends State<LoginScreen>
       body: _logueado ? HomeScreen(mensaje: mensaje) : loginForm(),
 //      body: loginForm(),
     );
+  }
+
+   void _createUser(context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        AlertDialogWindow alertDialogWindow =
+            new AlertDialogWindow();
+        return alertDialogWindow;
+      },
+    ).whenComplete(() {
+      Navigator.of(context).pushReplacement(LoginScreen.route());
+    });
   }
 
   Widget loginForm() {
@@ -126,10 +140,10 @@ class _LoginScreenState extends State<LoginScreen>
                     if (_key.currentState.validate()) {
                       _key.currentState.save();
                       //Aqui se llamaria a su API para hacer el login
-                      setState(() {
-                        _logueado = true;
-                      });
-                      mensaje = 'Thanks \n $_correo \n $_contrasena';
+                       setState(() {
+                         _logueado = true;
+                       });
+                       mensaje = 'Thanks \n $_correo \n $_contrasena';
 //                      Una forma correcta de llamar a otra pantalla
 //                      Navigator.of(context).push(HomeScreen.route(mensaje));
                     }
@@ -139,6 +153,12 @@ class _LoginScreenState extends State<LoginScreen>
                     size: 42.0,
                     color: Colors.blue[800],
                   ),
+                ),
+                FlatButton(
+                  child: Text("Create account"),
+                  onPressed: () async {
+                   _createUser(context);
+                  },
                 )
               ],
             ),

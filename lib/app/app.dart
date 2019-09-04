@@ -1,7 +1,18 @@
-import 'package:yahrzeits/screens/splashScreen.dart';
 import 'package:flutter/material.dart';
+import '../screens/splashScreen.dart';
+import "../service/graphQLConf.dart";
+import "package:graphql_flutter/graphql_flutter.dart";
 
-class AppBasica extends StatelessWidget {
+GraphQLConfiguration graphQLConfiguration = GraphQLConfiguration();
+
+void main() => runApp(
+      GraphQLProvider(
+        client: graphQLConfiguration.client,
+        child: CacheProvider(child: Yahrzeits()),
+      ),
+    );
+
+class Yahrzeits extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Todas sus apliaciones deben de estar dentro de Material App para poder

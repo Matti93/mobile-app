@@ -1,7 +1,9 @@
 import 'dart:async';
 
-import 'package:yahrzeits/screens/loginScreen.dart';
+import '../screens/loginScreen.dart';
 import 'package:flutter/material.dart';
+
+import 'loginScreen.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -40,8 +42,8 @@ class _SplashScreenState extends State<SplashScreen> {
             flex: 2,
             child: SafeArea(
               child: FractionallySizedBox(
-                widthFactor: 0.7,
-                child: Image.asset('assets/yahrzeits.png'),
+                widthFactor: 0.7
+               
               ),
             ),
           ),
