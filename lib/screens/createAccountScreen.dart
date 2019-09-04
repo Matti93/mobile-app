@@ -1,22 +1,22 @@
-import 'package:animaciones_basicas/service/graphQLConf.dart';
-import 'package:animaciones_basicas/service/queryMutation.dart';
+import 'package:animaciones_basicas/screens/loginScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import 'createAccountScreen.dart';
-import 'homeScreen.dart';
+import "../service/graphqlConf.dart";
+import "../service/queryMutation.dart";
+import "package:graphql_flutter/graphql_flutter.dart";
 
-class LoginScreen extends StatefulWidget {
+class CreateUserAccountScreen extends StatefulWidget {
   static Route<dynamic> route() {
     return MaterialPageRoute(
-      builder: (context) => LoginScreen(),
+      builder: (context) => CreateUserAccountScreen(),
     );
   }
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _CreateUserAccountScreenState createState() =>
+      _CreateUserAccountScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
+class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<double> animation;
@@ -28,9 +28,6 @@ class _LoginScreenState extends State<LoginScreen>
   RegExp contRegExp = new RegExp(r'^([1-zA-Z0-1@.\s]{1,255})$');
   String _correo;
   String _contrasena;
-  String mensaje = '';
-
-  bool _logueado = false;
 
   initState() {
     super.initState();
@@ -58,27 +55,7 @@ class _LoginScreenState extends State<LoginScreen>
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _logueado ? HomeScreen(mensaje: mensaje) : loginForm(),
-//      body: loginForm(),
-    );
-  }
-  //Uso esto si necesito llamar a create User en un alert
-  //  void _createUser(context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       AlertDialogWindow alertDialogWindow =
-  //           new AlertDialogWindow();
-  //       return alertDialogWindow;
-  //     },
-  //   ).whenComplete(() {
-  //     Navigator.of(context).pushReplacement(LoginScreen.route());
-  //   });
-  // }
-
+  // user defined function
   void _showDialog(tittleText, contentText, buttonText, isCreated) {
     // flutter defined function
     showDialog(
@@ -106,7 +83,13 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  Widget loginForm() {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+    );
+  }
+
+  Widget createUserForm() {
     TextEditingController txtMail = TextEditingController();
     TextEditingController txtPassword = TextEditingController();
     GraphQLConfiguration graphQLConfiguration = GraphQLConfiguration();
@@ -170,24 +153,26 @@ class _LoginScreenState extends State<LoginScreen>
                   onSaved: (text) => _contrasena = text,
                 ),
                 RaisedButton(
-                  child: Text("Sign In"),
-                  onPressed: () async {
+                    child: Text("Create Account"),
+                    onPressed: () async {
                       _key.currentState.save();
                       if (_key.currentState.validate()) {
                         GraphQLClient _client =
                             graphQLConfiguration.clientToQuery();
                         QueryResult result = await _client.mutate(
                           MutationOptions(
-                            document: addMutation.loginUser(
+                            document: addMutation.addUser(
                               _correo,
                               _contrasena,
                             ),
                           ),
                         );
+                        print(result);
                         if (!result.hasErrors) {
                           txtMail.clear();
                           txtPassword.clear();
-                          Navigator.of(context).pushReplacement(HomeScreen.route('asd'));
+                          _showDialog('Your user is created!',
+                              'The user with email \n $_correo was created!', 'LogIn', true);
                         } else {
                           print(result);
                           _showDialog('An error ocurred',
@@ -197,14 +182,8 @@ class _LoginScreenState extends State<LoginScreen>
                         }
                       }
                     },
-                  shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                ),
-                FlatButton(
-                  child: Text("Create account"),
-                  onPressed: () async {
-                  Navigator.of(context).pushReplacement(CreateUserAccountScreen.route());
-                  },
-                )
+                    shape: RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(30.0))),
               ],
             ),
           ),

@@ -1,6 +1,7 @@
-import 'package:yahrzeits/app/app.dart';
 import 'package:flutter/material.dart';
+import 'app/app.dart';
+
 //Punto de entrada para su aplicación
-void main() => runApp(AppBasica());
+void main() => runApp(Yahrzeits());
 
 
