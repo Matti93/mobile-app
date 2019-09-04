@@ -1,12 +1,11 @@
+import 'dart:developer';
+
 import 'package:animaciones_basicas/screens/loginScreen.dart';
 import 'package:flutter/material.dart';
-import 'alertDialogs.dart';
 import 'homeScreen.dart';
-import "package:flutter/material.dart";
 import "../service/graphqlConf.dart";
 import "../service/queryMutation.dart";
 import "package:graphql_flutter/graphql_flutter.dart";
-import "../models/user.dart";
 
 class CreateUserAccountScreen extends StatefulWidget {
   static Route<dynamic> route() {
@@ -16,7 +15,8 @@ class CreateUserAccountScreen extends StatefulWidget {
   }
 
   @override
-  _CreateUserAccountScreenState createState() => _CreateUserAccountScreenState();
+  _CreateUserAccountScreenState createState() =>
+      _CreateUserAccountScreenState();
 }
 
 class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
@@ -59,6 +59,34 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
     // Es importante SIEMPRE realizar el dispose del controller.
     controller.dispose();
     super.dispose();
+  }
+
+  // user defined function
+  void _showDialog(tittleText, contentText, buttonText, isCreated) {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text(tittleText),
+          content: new Text(contentText),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text(buttonText),
+              onPressed: () {
+                if (isCreated) {
+                  Navigator.of(context).pushReplacement(LoginScreen.route());
+                } else {
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -132,34 +160,40 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
                   ),
                   onSaved: (text) => _contrasena = text,
                 ),
-                 RaisedButton(
-                  child: Text("Create Account"),
-                  onPressed: () async {
-                    if (txtMail.text.isNotEmpty &&
-                        txtPassword.text.isNotEmpty) {
-                      GraphQLClient _client = graphQLConfiguration.clientToQuery();
-                      QueryResult result = await _client.mutate(
-                        MutationOptions(
-                          document: addMutation.addUser(
-                            txtMail.text,
-                            txtPassword.text,
+                RaisedButton(
+                    child: Text("Create Account"),
+                    onPressed: () async {
+                      _key.currentState.save();
+                      if (_key.currentState.validate()) {
+                        GraphQLClient _client =
+                            graphQLConfiguration.clientToQuery();
+                        QueryResult result = await _client.mutate(
+                          MutationOptions(
+                            document: addMutation.addUser(
+                              _correo,
+                              _contrasena,
+                            ),
                           ),
-                        ),
-                      );
-                      if (!result.hasErrors) {
-                        txtMail.clear();
-                        txtPassword.clear();
-                        Navigator.of(context).pop();
+                        );
+                        print(result);
+                        if (!result.hasErrors) {
+                          log('noentra');
+                          txtMail.clear();
+                          txtPassword.clear();
+                          _showDialog('Your user is created!',
+                              'The user with email \n $_correo was created!', 'LogIn', true);
+                        } else {
+                          log('entra');
+                          print(result);
+                          _showDialog('An error ocurred',
+                              result.errors[0].message, 'Close', false);
+                          txtMail.clear();
+                          txtPassword.clear();
+                        }
                       }
-                      if(!result.data){
-                        txtMail.clear();
-                        txtPassword.clear();
-                        Navigator.of(context).pushReplacement(LoginScreen.route());
-                      }
-                    }
-                  },
-                  shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                 ),
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(30.0))),
               ],
             ),
           ),
