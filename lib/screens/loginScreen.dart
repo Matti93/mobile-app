@@ -61,6 +61,7 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(90, 200, 250, 100),
       body: _logueado ? HomeScreen(mensaje: mensaje) : loginForm(),
 //      body: loginForm(),
     );
@@ -142,8 +143,6 @@ class _LoginScreenState extends State<LoginScreen>
                     hintText: 'Enter your email',
                     labelText: 'Mail',
                     counterText: '',
-                    icon:
-                        Icon(Icons.email, size: 32.0, color: Colors.blue[800]),
                   ),
                   onSaved: (text) => _correo = text,
                 ),
