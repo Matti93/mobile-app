@@ -169,8 +169,8 @@ class _LoginScreenState extends State<LoginScreen>
                   onSaved: (text) => _contrasena = text,
                 ),
                 RaisedButton(
-                  child: Text("Sign In"),
-                  onPressed: () async {
+                    child: Text("Sign In"),
+                    onPressed: () async {
                       _key.currentState.save();
                       if (_key.currentState.validate()) {
                         GraphQLClient _client =
@@ -186,7 +186,8 @@ class _LoginScreenState extends State<LoginScreen>
                         if (!result.hasErrors) {
                           txtMail.clear();
                           txtPassword.clear();
-                          Navigator.of(context).pushReplacement(HomeScreen.route('asd'));
+                          Navigator.of(context)
+                              .pushReplacement(HomeScreen.route('asd'));
                         } else {
                           print(result);
                           _showDialog('An error ocurred',
@@ -196,12 +197,13 @@ class _LoginScreenState extends State<LoginScreen>
                         }
                       }
                     },
-                  shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(30.0))),
                 FlatButton(
                   child: Text("Create account"),
                   onPressed: () async {
-                  Navigator.of(context).pushReplacement(CreateUserAccountScreen.route());
+                    Navigator.of(context)
+                        .pushReplacement(CreateUserAccountScreen.route());
                   },
                 )
               ],

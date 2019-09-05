@@ -1,3 +1,4 @@
+import 'package:animaciones_basicas/screens/homeScreen.dart';
 import 'package:animaciones_basicas/screens/loginScreen.dart';
 import 'package:flutter/material.dart';
 import "../service/graphqlConf.dart";
@@ -28,7 +29,8 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
   RegExp contRegExp = new RegExp(r'^([1-zA-Z0-1@.\s]{1,255})$');
   String _correo;
   String _contrasena;
-
+  bool _logueado = false;
+  String mensaje = '';
   initState() {
     super.initState();
     controller = AnimationController(
@@ -86,6 +88,7 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      body: _logueado ? HomeScreen(mensaje: mensaje) : createUserForm(),
     );
   }
 
