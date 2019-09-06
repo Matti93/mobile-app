@@ -1,5 +1,5 @@
-import 'package:animaciones_basicas/screens/homeScreen.dart';
-import 'package:animaciones_basicas/screens/loginScreen.dart';
+import 'package:Yahrzeit/screens/loginScreen.dart';
+import 'package:Yahrzeit/screens/homeScreen.dart';
 import 'package:flutter/material.dart';
 import "../service/graphqlConf.dart";
 import "../service/queryMutation.dart";
@@ -87,9 +87,21 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _logueado ? HomeScreen(mensaje: mensaje) : createUserForm(),
-    );
+    return new WillPopScope(
+        child: new Scaffold(
+          backgroundColor: Color.fromRGBO(119, 173, 222, 10),
+          body: _logueado ? HomeScreen(mensaje: mensaje) : createUserForm(),
+          appBar: new AppBar(
+            backgroundColor: Color.fromRGBO(119, 173, 222, 10),
+            elevation: 0.0,
+            title: new Text("Create Account"),
+            leading: new IconButton(
+              icon: new Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).pushReplacement(LoginScreen.route()),
+            ),
+          ),
+        ),
+        onWillPop: () async => false);
   }
 
   Widget createUserForm() {
@@ -112,6 +124,7 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
             key: _key,
             child: Column(
               children: <Widget>[
+                SizedBox(height: 30.0),
                 TextFormField(
                   validator: (text) {
                     if (text.length == 0) {
@@ -125,14 +138,20 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
                   maxLength: 50,
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
-                    hintText: 'Enter your email',
-                    labelText: 'Mail',
+                    hintText: 'Email',
+                    fillColor: Colors.white,
+                    filled: true,
                     counterText: '',
-                    icon:
-                        Icon(Icons.email, size: 32.0, color: Colors.blue[800]),
+                    hintStyle: new TextStyle(color: Colors.grey[400]),
+                    border: new OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        const Radius.circular(30.0),
+                      ),
+                    ),
                   ),
                   onSaved: (text) => _correo = text,
                 ),
+                SizedBox(height: 10.0),
                 TextFormField(
                   validator: (text) {
                     if (text.length == 0) {
@@ -148,45 +167,61 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
                   maxLength: 20,
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
-                    hintText: 'Enter your Password',
-                    labelText: 'Password',
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: new OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        const Radius.circular(30.0),
+                      ),
+                    ),
+                    hintStyle: new TextStyle(color: Colors.grey[400]),
+                    hintText: 'Password',
                     counterText: '',
-                    icon: Icon(Icons.lock, size: 32.0, color: Colors.blue[800]),
                   ),
                   onSaved: (text) => _contrasena = text,
                 ),
-                RaisedButton(
-                    child: Text("Create Account"),
-                    onPressed: () async {
-                      _key.currentState.save();
-                      if (_key.currentState.validate()) {
-                        GraphQLClient _client =
-                            graphQLConfiguration.clientToQuery();
-                        QueryResult result = await _client.mutate(
-                          MutationOptions(
-                            document: addMutation.addUser(
-                              _correo,
-                              _contrasena,
-                            ),
-                          ),
-                        );
-                        print(result);
-                        if (!result.hasErrors) {
-                          txtMail.clear();
-                          txtPassword.clear();
-                          _showDialog('Your user is created!',
-                              'The user with email \n $_correo was created!', 'LogIn', true);
-                        } else {
-                          print(result);
-                          _showDialog('An error ocurred',
-                              result.errors[0].message, 'Close', false);
-                          txtMail.clear();
-                          txtPassword.clear();
-                        }
-                      }
-                    },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(30.0))),
+                SizedBox(height: 50.0),
+                ButtonTheme(
+                    minWidth: 300,
+                    height: 50,
+                    child: RaisedButton(
+                        color: Colors.white,
+                        child: Text("Create Account",
+                            style: new TextStyle(
+                                fontSize: 20, color: Colors.black54)),
+                        onPressed: () async {
+                          _key.currentState.save();
+                          if (_key.currentState.validate()) {
+                            GraphQLClient _client =
+                                graphQLConfiguration.clientToQuery();
+                            QueryResult result = await _client.mutate(
+                              MutationOptions(
+                                document: addMutation.addUser(
+                                  _correo,
+                                  _contrasena,
+                                ),
+                              ),
+                            );
+                            print(result);
+                            if (!result.hasErrors) {
+                              txtMail.clear();
+                              txtPassword.clear();
+                              _showDialog(
+                                  'Your user is created!',
+                                  'The user with email \n $_correo was created!',
+                                  'LogIn',
+                                  true);
+                            } else {
+                              print(result);
+                              _showDialog('An error ocurred',
+                                  result.errors[0].message, 'Close', false);
+                              txtMail.clear();
+                              txtPassword.clear();
+                            }
+                          }
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)))),
               ],
             ),
           ),
@@ -199,7 +234,6 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
 class AnimatedLogo extends AnimatedWidget {
   // Maneja los Tween estáticos debido a que estos no cambian.
   static final _opacityTween = Tween<double>(begin: 0.1, end: 1.0);
-  static final _sizeTween = Tween<double>(begin: 0.0, end: 150.0);
 
   AnimatedLogo({Key key, Animation<double> animation})
       : super(key: key, listenable: animation);
@@ -209,10 +243,12 @@ class AnimatedLogo extends AnimatedWidget {
     return Opacity(
       opacity: _opacityTween.evaluate(animation),
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 10.0),
-        height: _sizeTween.evaluate(animation), // Aumenta la altura
-        width: _sizeTween.evaluate(animation), // Aumenta el ancho
-        child: FlutterLogo(),
+        child: Image.asset(
+          'assets/images/imageScreen.png',
+          fit: BoxFit.cover,
+          width: 300,
+          height: 200,
+        ),
       ),
     );
   }

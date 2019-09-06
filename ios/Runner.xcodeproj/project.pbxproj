@@ -380,7 +380,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.arkangel.animacionesbasicas;
+				PRODUCT_BUNDLE_IDENTIFIER = io.matti93.animacionesbasicas;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -404,7 +404,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 
-				PRODUCT_BUNDLE_IDENTIFIER = io.arkangel.argelbejarano.yahrzeits;
+				PRODUCT_BUNDLE_IDENTIFIER = io.matti93.yahrzeits;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

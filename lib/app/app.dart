@@ -1,5 +1,6 @@
+import 'package:Yahrzeit/screens/splashScreen.dart';
 import 'package:flutter/material.dart';
-import '../screens/splashScreen.dart';
+// import '../screens/splashScreen.dart';
 import "../service/graphQLConf.dart";
 import "package:graphql_flutter/graphql_flutter.dart";
 

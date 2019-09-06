@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _onShowLogin() {
-    if(mounted){
+    if (mounted) {
       Navigator.of(context).pushReplacement(LoginScreen.route());
     }
   }
@@ -37,28 +37,27 @@ class _SplashScreenState extends State<SplashScreen> {
       color: Colors.grey[600],
       child: Column(
         children: <Widget>[
-          SizedBox(height: 100.0,),
+          SizedBox(
+            height: 100.0,
+          ),
+          Image.asset(
+            'assets/images/imageScreen.png',
+            fit: BoxFit.cover,
+            width: 300,
+            height: 200,
+          ),
           Flexible(
             flex: 2,
             child: SafeArea(
-              child: FractionallySizedBox(
-                widthFactor: 0.7
-               
-              ),
-            ),
-          ),
-          Text(
-            'Welcome!',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18.0,
+              child: FractionallySizedBox(widthFactor: 0.7),
             ),
           ),
           Flexible(
             flex: 2,
             child: SafeArea(
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 64.0, horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(
+                    vertical: 64.0, horizontal: 16.0),
                 alignment: Alignment.bottomCenter,
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
