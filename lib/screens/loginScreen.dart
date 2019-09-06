@@ -1,5 +1,5 @@
-import 'package:animaciones_basicas/service/graphQLConf.dart';
-import 'package:animaciones_basicas/service/queryMutation.dart';
+import 'package:Yahrzeit/service/graphQLConf.dart';
+import 'package:Yahrzeit/service/queryMutation.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'createAccountScreen.dart';
@@ -61,6 +61,7 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(119, 173, 222, 10),
       body: _logueado ? HomeScreen(mensaje: mensaje) : loginForm(),
 //      body: loginForm(),
     );
@@ -126,6 +127,7 @@ class _LoginScreenState extends State<LoginScreen>
             key: _key,
             child: Column(
               children: <Widget>[
+                SizedBox(height: 20.0),
                 TextFormField(
                   validator: (text) {
                     if (text.length == 0) {
@@ -139,14 +141,20 @@ class _LoginScreenState extends State<LoginScreen>
                   maxLength: 50,
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
-                    hintText: 'Enter your email',
-                    labelText: 'Mail',
+                    border: new OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        const Radius.circular(30.0),
+                      ),
+                    ),
+                    fillColor: Colors.white,
+                    hintText: 'Email',
+                    filled: true,
+                    hintStyle: new TextStyle(color: Colors.grey[400]),
                     counterText: '',
-                    icon:
-                        Icon(Icons.email, size: 32.0, color: Colors.blue[800]),
                   ),
                   onSaved: (text) => _correo = text,
                 ),
+                SizedBox(height: 18.0),
                 TextFormField(
                   validator: (text) {
                     if (text.length == 0) {
@@ -162,48 +170,68 @@ class _LoginScreenState extends State<LoginScreen>
                   maxLength: 20,
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
-                    hintText: 'Enter your Password',
-                    labelText: 'Password',
+                    hintText: 'Password',
                     counterText: '',
-                    icon: Icon(Icons.lock, size: 32.0, color: Colors.blue[800]),
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: new OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        const Radius.circular(30.0),
+                      ),
+                    ),
+                    hintStyle: new TextStyle(color: Colors.grey[400]),
                   ),
                   onSaved: (text) => _contrasena = text,
                 ),
-                RaisedButton(
-                  child: Text("Sign In"),
-                  onPressed: () async {
-                      _key.currentState.save();
-                      if (_key.currentState.validate()) {
-                        GraphQLClient _client =
-                            graphQLConfiguration.clientToQuery();
-                        QueryResult result = await _client.mutate(
-                          MutationOptions(
-                            document: addMutation.loginUser(
-                              _correo,
-                              _contrasena,
-                            ),
-                          ),
-                        );
-                        if (!result.hasErrors) {
-                          txtMail.clear();
-                          txtPassword.clear();
-                          Navigator.of(context).pushReplacement(HomeScreen.route('asd'));
-                        } else {
-                          print(result);
-                          _showDialog('An error ocurred',
-                              result.errors[0].message, 'Close', false);
-                          txtMail.clear();
-                          txtPassword.clear();
-                        }
-                      }
-                    },
-                  shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                ),
+                SizedBox(height: 50.0),
+                ButtonTheme(
+                    minWidth: 300,
+                    height: 50,
+                    child: RaisedButton(
+                        color: Colors.white,
+                        child: Text(
+                          "Sign In",
+                          style: new TextStyle(
+                              fontSize: 20, color: Colors.black54),
+                        ),
+                        onPressed: () async {
+                          _key.currentState.save();
+                          if (_key.currentState.validate()) {
+                            GraphQLClient _client =
+                                graphQLConfiguration.clientToQuery();
+                            QueryResult result = await _client.mutate(
+                              MutationOptions(
+                                document: addMutation.loginUser(
+                                  _correo,
+                                  _contrasena,
+                                ),
+                              ),
+                            );
+                            if (!result.hasErrors) {
+                              txtMail.clear();
+                              txtPassword.clear();
+                              Navigator.of(context)
+                                  .pushReplacement(HomeScreen.route('asd'));
+                            } else {
+                              print(result);
+                              _showDialog('An error ocurred',
+                                  result.errors[0].message, 'Close', false);
+                              txtMail.clear();
+                              txtPassword.clear();
+                            }
+                          }
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0)))),
+                SizedBox(height: 50.0),
                 FlatButton(
-                  child: Text("Create account"),
+                  child: Text("Create account",
+                      style: new TextStyle(fontSize: 16)),
                   onPressed: () async {
-                  Navigator.of(context).pushReplacement(CreateUserAccountScreen.route());
+                    Navigator.of(context)
+                        .pushReplacement(CreateUserAccountScreen.route());
                   },
+                  textColor: Colors.white,
                 )
               ],
             ),
@@ -217,7 +245,6 @@ class _LoginScreenState extends State<LoginScreen>
 class AnimatedLogo extends AnimatedWidget {
   // Maneja los Tween estáticos debido a que estos no cambian.
   static final _opacityTween = Tween<double>(begin: 0.1, end: 1.0);
-  static final _sizeTween = Tween<double>(begin: 0.0, end: 150.0);
 
   AnimatedLogo({Key key, Animation<double> animation})
       : super(key: key, listenable: animation);
@@ -227,10 +254,12 @@ class AnimatedLogo extends AnimatedWidget {
     return Opacity(
       opacity: _opacityTween.evaluate(animation),
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 10.0),
-        height: _sizeTween.evaluate(animation), // Aumenta la altura
-        width: _sizeTween.evaluate(animation), // Aumenta el ancho
-        child: FlutterLogo(),
+       child: Image.asset(
+          'assets/images/imageScreen.png',
+          fit: BoxFit.cover,
+          width: 300,
+          height: 200,
+        ),
       ),
     );
   }
