@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen>
   String mensaje = '';
 
   bool _logueado = false;
-
+  bool _hidePassword = true;
   initState() {
     super.initState();
     controller = AnimationController(
@@ -62,24 +62,9 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(119, 173, 222, 10),
-      body: _logueado ? HomeScreen(mensaje: mensaje) : loginForm(),
-//      body: loginForm(),
+      body: _logueado ? HomeScreen() : loginForm(),
     );
   }
-  //Uso esto si necesito llamar a create User en un alert
-  //  void _createUser(context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       AlertDialogWindow alertDialogWindow =
-  //           new AlertDialogWindow();
-  //       return alertDialogWindow;
-  //     },
-  //   ).whenComplete(() {
-  //     Navigator.of(context).pushReplacement(LoginScreen.route());
-  //   });
-  // }
-
   void _showDialog(tittleText, contentText, buttonText, isCreated) {
     // flutter defined function
     showDialog(
@@ -169,6 +154,7 @@ class _LoginScreenState extends State<LoginScreen>
                   keyboardType: TextInputType.text,
                   maxLength: 20,
                   textAlign: TextAlign.center,
+                  obscureText: _hidePassword,
                   decoration: InputDecoration(
                     hintText: 'Password',
                     counterText: '',
@@ -211,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen>
                               txtMail.clear();
                               txtPassword.clear();
                               Navigator.of(context)
-                                  .pushReplacement(HomeScreen.route('asd'));
+                                  .pushReplacement(HomeScreen.route());
                             } else {
                               print(result);
                               _showDialog('An error ocurred',

@@ -31,6 +31,7 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
   String _contrasena;
   bool _logueado = false;
   String mensaje = '';
+  bool _hidePassword = true;
   initState() {
     super.initState();
     controller = AnimationController(
@@ -90,7 +91,7 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
     return new WillPopScope(
         child: new Scaffold(
           backgroundColor: Color.fromRGBO(119, 173, 222, 10),
-          body: _logueado ? HomeScreen(mensaje: mensaje) : createUserForm(),
+          body: _logueado ? HomeScreen() : createUserForm(),
           appBar: new AppBar(
             backgroundColor: Color.fromRGBO(119, 173, 222, 10),
             elevation: 0.0,
@@ -166,6 +167,7 @@ class _CreateUserAccountScreenState extends State<CreateUserAccountScreen>
                   keyboardType: TextInputType.text,
                   maxLength: 20,
                   textAlign: TextAlign.center,
+                  obscureText: _hidePassword,
                   decoration: InputDecoration(
                     fillColor: Colors.white,
                     filled: true,
