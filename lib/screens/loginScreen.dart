@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen>
   String _correo;
   String _contrasena;
   String mensaje = '';
-
+  bool _hidePassword = true;
   bool _logueado = false;
 
   initState() {
@@ -61,8 +61,9 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       backgroundColor: Color.fromRGBO(119, 173, 222, 10),
-      body: _logueado ? HomeScreen(mensaje: mensaje) : loginForm(),
+      body: _logueado ? HomeScreen() : loginForm(),
 //      body: loginForm(),
     );
   }
@@ -107,12 +108,19 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
+  void _toggle() {
+    setState(() {
+      _hidePassword = !_hidePassword;
+    });
+  }
+
   Widget loginForm() {
     TextEditingController txtMail = TextEditingController();
     TextEditingController txtPassword = TextEditingController();
     GraphQLConfiguration graphQLConfiguration = GraphQLConfiguration();
     QueryMutation addMutation = QueryMutation();
-    return Column(
+    return SingleChildScrollView(
+        child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Row(
@@ -168,6 +176,7 @@ class _LoginScreenState extends State<LoginScreen>
                   },
                   keyboardType: TextInputType.text,
                   maxLength: 20,
+                  obscureText: _hidePassword,
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
                     hintText: 'Password',
@@ -180,10 +189,17 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                     ),
                     hintStyle: new TextStyle(color: Colors.grey[400]),
+                    // icon:
+                    //     Icon(Icons.email, size: 32.0, color: Colors.blue[800]),
                   ),
                   onSaved: (text) => _contrasena = text,
                 ),
-                SizedBox(height: 50.0),
+                new FlatButton(
+                    onPressed: _toggle,
+                    child: new Text(
+                        _hidePassword ? "Show Password" : "Hide Password",
+                        style: new TextStyle(color: Colors.white))),
+                SizedBox(height: 30.0),
                 ButtonTheme(
                     minWidth: 300,
                     height: 50,
@@ -211,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen>
                               txtMail.clear();
                               txtPassword.clear();
                               Navigator.of(context)
-                                  .pushReplacement(HomeScreen.route('asd'));
+                                  .pushReplacement(HomeScreen.route());
                             } else {
                               print(result);
                               _showDialog('An error ocurred',
@@ -238,7 +254,7 @@ class _LoginScreenState extends State<LoginScreen>
           ),
         ),
       ],
-    );
+    ));
   }
 }
 
@@ -254,7 +270,7 @@ class AnimatedLogo extends AnimatedWidget {
     return Opacity(
       opacity: _opacityTween.evaluate(animation),
       child: Container(
-       child: Image.asset(
+        child: Image.asset(
           'assets/images/imageScreen.png',
           fit: BoxFit.cover,
           width: 300,
