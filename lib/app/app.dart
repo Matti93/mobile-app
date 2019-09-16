@@ -1,4 +1,4 @@
-import 'package:Yahrzeit/screens/homeScreen.dart';
+import 'package:Yahrzeit/screens/createYahrzeitScreen.dart';
 import 'package:Yahrzeit/screens/loginScreen.dart';
 import 'package:flutter/material.dart';
 // import '../screens/splashScreen.dart';
@@ -24,7 +24,7 @@ class Yahrzeits extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light(), //  Tema Claro
 //      theme: ThemeData.dark(), // Tema Obscuro
-      home: LoginScreen(),
+      home: CreateYahrzeitAccountScreen(),
     );
   }
 }

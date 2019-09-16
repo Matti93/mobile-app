@@ -24,4 +24,19 @@ class QueryMutation {
     }
     """;
   }
+
+ String relatitonsTyps(String mail, String password) {
+    return """
+      mutation{
+        login(
+          email:"$mail",
+          password: "$password"
+      )
+      {
+        token
+        email
+      }
+    }
+    """;
+  }
 }
