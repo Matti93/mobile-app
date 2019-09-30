@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:Yahrzeit/service/graphQLConf.dart';
 import 'package:Yahrzeit/service/queryMutation.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'createAccountScreen.dart';
 import 'homeScreen.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginScreen extends StatefulWidget {
   static Route<dynamic> route() {
@@ -29,9 +32,9 @@ class _LoginScreenState extends State<LoginScreen>
   String _correo;
   String _contrasena;
   String mensaje = '';
-
-  bool _logueado = false;
   bool _hidePassword = true;
+  // Create storage
+  final storage = new FlutterSecureStorage();
   initState() {
     super.initState();
     controller = AnimationController(
@@ -62,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(119, 173, 222, 10),
-      body: _logueado ? HomeScreen() : loginForm(),
+      body: loginForm(),
     );
   }
   void _showDialog(tittleText, contentText, buttonText, isCreated) {
@@ -196,6 +199,9 @@ class _LoginScreenState extends State<LoginScreen>
                             if (!result.hasErrors) {
                               txtMail.clear();
                               txtPassword.clear();
+                              log('token');
+                              log(result.data.data[0]->"login");
+                              await storage.write(key: 'token', value: result.data.token);
                               Navigator.of(context)
                                   .pushReplacement(HomeScreen.route());
                             } else {
